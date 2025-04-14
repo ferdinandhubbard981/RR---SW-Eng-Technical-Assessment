@@ -10,80 +10,82 @@ Robot::Robot()
     this->last_odom = Vec2();
 }
 
-void Robot::check_battery_cost(double distance, double speed) 
+void Robot::check_battery_cost(double distance, double &speed) 
 {
     double battery_cost = this->calculate_battery_cost(distance, speed);
-    if (battery_cost > 100.0)
-    {
-        throw std::runtime_error("Battery cost exceeds maximum allowed (100). Movement aborted.");
+    if (battery_cost > 100.0) {
+        speed = 99.0 / distance; // max speed to travel this distance with 1% left on the battery
     }
-
     if (battery_cost > this->battery) this->charge_battery();
 }
 
 void Robot::move_to(Vec2 position, double speed)
 {
-    Vec2 delta = this->last_odom - position;
+    Vec2 delta = position - this->last_odom;
     if (delta.x > 0.0) {
         Vec2 temp_position(position.x, this->last_odom.y);
         double distance = this->calculate_distance(temp_position);
-        this->check_battery_cost(distance, speed);
-        move_robot_forward(distance, speed);
+        double speed_copy = speed;
+        this->check_battery_cost(distance, speed_copy);
+        move_robot_forward(distance, speed_copy);
     }
     else if (delta.x < 0.0) {
         Vec2 temp_position(position.x, this->last_odom.y);
         double distance = this->calculate_distance(temp_position);
-        this->check_battery_cost(distance, speed);
-        move_robot_backward(distance, speed);
+        double speed_copy = speed;
+        this->check_battery_cost(distance, speed_copy);
+        move_robot_backward(distance, speed_copy);
     }
     if (delta.y > 0.0) {
         Vec2 temp_position(this->last_odom.x, position.y);
         double distance = this->calculate_distance(temp_position);
-        this->check_battery_cost(distance, speed);
-        move_robot_right(distance, speed);
+        double speed_copy = speed;
+        this->check_battery_cost(distance, speed_copy);
+        move_robot_right(distance, speed_copy);
     }
     else if (delta.y < 0.0) {
         Vec2 temp_position(this->last_odom.x, position.y);
         double distance = this->calculate_distance(temp_position);
-        this->check_battery_cost(distance, speed);
-        move_robot_left(distance, speed);
+        double speed_copy = speed;
+        this->check_battery_cost(distance, speed_copy);
+        move_robot_left(distance, speed_copy);
     }
 }
 
 // I would've thought that forward would increment y and not x.
 void Robot::move_robot_forward(double distance, double speed)
 {
+    std::cout << "Moving forward " << distance << " meters with speed " << speed << std::endl;
     this->motor_state = true;
     this->update_battery_level(distance, speed);
     this->update_odometry(this->last_odom.x + distance, this->last_odom.y);
-    std::cout << "Moving forward " << distance << " meters with speed " << speed << std::endl;
     // TODO reset motor_state
 }
 
 void Robot::move_robot_backward(double distance, double speed)
 {
+    std::cout << "Moving backward " << distance << " meters with speed " << speed << std::endl;
     this->motor_state = true;
     this->update_battery_level(distance, speed);
     this->update_odometry(this->last_odom.x - distance, this->last_odom.y);
-    std::cout << "Moving backward " << distance << " meters with speed " << speed << std::endl;
     // TODO reset motor_state
 }
 
 void Robot::move_robot_right(double distance, double speed)
 {
+    std::cout << "Moving right " << distance << " meters with speed " << speed << std::endl;
     this->motor_state = true;
     this->update_battery_level(distance, speed);
     this->update_odometry(this->last_odom.x, this->last_odom.y + distance);
-    std::cout << "Moving right " << distance << " meters with speed " << speed << std::endl;
     // TODO reset motor_state
 }
 
 void Robot::move_robot_left(double distance, double speed)
 {
+    std::cout << "Moving left " << distance << " meters with speed " << speed << std::endl;
     this->motor_state = true;
     this->update_battery_level(distance, speed);
     this->update_odometry(this->last_odom.x, this->last_odom.y - distance);
-    std::cout << "Moving left " << distance << " meters with speed " << speed << std::endl;
     // TODO reset motor_state
 }
 

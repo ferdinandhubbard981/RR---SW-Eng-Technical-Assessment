@@ -11,7 +11,7 @@ class Robot
 
     public:
         Robot();
-        void check_battery_cost(double distance, double speed);
+        void check_battery_cost(double distance, double& speed);
         void move_to(Vec2 position, double speed);
         void move_robot_forward(double distance, double speed);
         void move_robot_backward(double distance, double speed);
