@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "media_player.cpp"
+#include "media_player.hpp"
 
 void print_instructions() {
     std::cout << "Controls:\n"

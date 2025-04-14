@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../src/media_player.cpp"
+#include "media_player.hpp"
 
 TEST(BaseTest, InitialiseEmpty) {
   MediaPlayer media_player;
