@@ -18,6 +18,7 @@ class MediaPlayer
         {
             if (on_state)
             {
+                play_state = Stopped;
                 on_state = false;
                 return;
             }
@@ -56,5 +57,5 @@ class MediaPlayer
         {
             return play_state;
         }
-        
+
 };
