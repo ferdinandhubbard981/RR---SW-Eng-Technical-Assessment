@@ -1,20 +1,53 @@
 #include <iostream>
 #include "robot.hpp"
+#include "vec2.hpp"
 
 Robot::Robot()
 {
-    this->battery = 100;
+    this->battery = 100.0;
     this->is_charging = false;
     this->motor_state = false;
-    this->last_odom_x = 0.0;
-    this->last_odom_y = 0.0;
+    this->last_odom = Vec2();
 }
 
+void Robot::move_to(Vec2 position, double speed)
+{
+    double total_distance = this->calculate_distance(position);
+    double battery_cost = this->calculate_battery_cost(total_distance, speed);
+    if (battery_cost > 100.0)
+    {
+        throw std::runtime_error("Battery cost exceeds maximum allowed (100). Movement aborted.");
+    }
+
+    if (battery_cost > this->battery) this->charge_battery();
+    if (position.x > 0) {
+        Vec2 temp_position(position.x, this->last_odom.y);
+        double distance = this->calculate_distance(temp_position);
+        move_robot_forward(distance, speed);
+    }
+    else if (position.x < 0) {
+        Vec2 temp_position(position.x, this->last_odom.y);
+        double distance = this->calculate_distance(temp_position);
+        move_robot_backward(distance, speed);
+    }
+    if (position.y > 0) {
+        Vec2 temp_position(this->last_odom.x, position.y);
+        double distance = this->calculate_distance(temp_position);
+        move_robot_right(distance, speed);
+    }
+    else if (position.y < 0) {
+        Vec2 temp_position(this->last_odom.x, position.y);
+        double distance = this->calculate_distance(temp_position);
+        move_robot_left(distance, speed);
+    }
+}
+
+// I would've thought that forward would increment y and not x.
 void Robot::move_robot_forward(double distance, double speed)
 {
     this->motor_state = true;
     this->update_battery_level(distance, speed);
-    this->update_odometry(this->last_odom_x + distance, this->last_odom_y);
+    this->update_odometry(this->last_odom.x + distance, this->last_odom.y);
     std::cout << "Moving forward " << distance << " meters with speed " << speed << std::endl;
     // TODO reset motor_state
 }
@@ -23,7 +56,7 @@ void Robot::move_robot_backward(double distance, double speed)
 {
     this->motor_state = true;
     this->update_battery_level(distance, speed);
-    this->update_odometry(this->last_odom_x - distance, this->last_odom_y);
+    this->update_odometry(this->last_odom.x - distance, this->last_odom.y);
     std::cout << "Moving backward " << distance << " meters with speed " << speed << std::endl;
     // TODO reset motor_state
 }
@@ -32,7 +65,7 @@ void Robot::move_robot_right(double distance, double speed)
 {
     this->motor_state = true;
     this->update_battery_level(distance, speed);
-    this->update_odometry(this->last_odom_x, this->last_odom_y + distance);
+    this->update_odometry(this->last_odom.x, this->last_odom.y + distance);
     std::cout << "Moving right " << distance << " meters with speed " << speed << std::endl;
     // TODO reset motor_state
 }
@@ -41,30 +74,27 @@ void Robot::move_robot_left(double distance, double speed)
 {
     this->motor_state = true;
     this->update_battery_level(distance, speed);
-    this->update_odometry(this->last_odom_x, this->last_odom_y - distance);
+    this->update_odometry(this->last_odom.x, this->last_odom.y - distance);
     std::cout << "Moving left " << distance << " meters with speed " << speed << std::endl;
     // TODO reset motor_state
 }
 
-double* Robot::get_odometry(double distance, double speed)
+Vec2 Robot::get_odometry()
 {
-    double* pos = new double[2];
-    pos[0] = this->last_odom_x;
-    pos[1] = this->last_odom_y;
-    return pos;
+    return this->last_odom;
 }
 
 void Robot::update_odometry(double x, double y)
 {
-    this->last_odom_x = x;
-    this->last_odom_y = y;
+    this->last_odom.x = x;
+    this->last_odom.y = y;
     std::cout << "Odometry updated to (" << x << ", " << y << ")" << std::endl;
 }
 
-double Robot::calculate_distance(double target_x, double target_y)
+double Robot::calculate_distance(Vec2 target)
 {
     // This is not correct, we need to abs() the x and y components respectively before adding them together
-    double result = this->last_odom_x + this->last_odom_y - (target_x + target_y);
+    double result = this->last_odom.x + this->last_odom.y - (target.x + target.y);
     return (result > 0) ? result : -result;
 }
 
@@ -78,7 +108,7 @@ void Robot::check_battery()
     }
 }
 
-void Robot::set_battery_level(int battery_level)
+void Robot::set_battery_level(double battery_level)
 {
     this->battery = battery_level;
     std::cout << "Battery set to: " << this->battery << std::endl;
@@ -91,9 +121,14 @@ void Robot::update_battery_level(double distance, double speed)
     std::cout << "Battery level updated to: " << battery << std::endl;
 }
 
+double Robot::calculate_battery_cost(double distance, double speed)
+{
+    return distance*speed;
+}
+
 void Robot::charge_battery()
 {
     this->is_charging = true;
-    this->battery++;
+    this->battery = 100;
     std::cout << "Charging..." << std::endl;
 }
