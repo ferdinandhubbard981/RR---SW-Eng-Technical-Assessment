@@ -3,8 +3,8 @@
 
 MediaPlayer::MediaPlayer()
 {
-    on_state = false;
-    play_state = Stopped;
+    this->on_state = false;
+    this->play_state = Stopped;
 }
 
 void MediaPlayer::power_button_pressed()
