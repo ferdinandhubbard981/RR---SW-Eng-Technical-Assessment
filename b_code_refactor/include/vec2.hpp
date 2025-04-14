@@ -1,4 +1,5 @@
 #pragma once
+#include <sstream>
 struct Vec2 {
     double x, y;
 
@@ -16,4 +17,12 @@ struct Vec2 {
     Vec2 operator-() const {
         return Vec2(-x, -y);
     }
+
+    std::string to_string()
+    {
+        std::stringstream ss;
+        ss << "(" << x << ", " << y << ")";
+        return ss.str();
+    }
+
 };

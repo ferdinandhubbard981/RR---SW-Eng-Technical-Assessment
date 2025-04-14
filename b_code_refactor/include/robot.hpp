@@ -11,6 +11,7 @@ class Robot
 
     public:
         Robot();
+        void check_battery_cost(double distance, double speed);
         void move_to(Vec2 position, double speed);
         void move_robot_forward(double distance, double speed);
         void move_robot_backward(double distance, double speed);
@@ -23,4 +24,5 @@ class Robot
         void update_battery_level(double distance, double speed);
         void set_battery_level(double battery_level);
         void charge_battery();
+        void print_info();
 };

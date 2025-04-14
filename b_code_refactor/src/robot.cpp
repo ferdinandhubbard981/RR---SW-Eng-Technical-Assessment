@@ -10,34 +10,42 @@ Robot::Robot()
     this->last_odom = Vec2();
 }
 
-void Robot::move_to(Vec2 position, double speed)
+void Robot::check_battery_cost(double distance, double speed) 
 {
-    double total_distance = this->calculate_distance(position);
-    double battery_cost = this->calculate_battery_cost(total_distance, speed);
+    double battery_cost = this->calculate_battery_cost(distance, speed);
     if (battery_cost > 100.0)
     {
         throw std::runtime_error("Battery cost exceeds maximum allowed (100). Movement aborted.");
     }
 
     if (battery_cost > this->battery) this->charge_battery();
-    if (position.x > 0) {
+}
+
+void Robot::move_to(Vec2 position, double speed)
+{
+    Vec2 delta = this->last_odom - position;
+    if (delta.x > 0.0) {
         Vec2 temp_position(position.x, this->last_odom.y);
         double distance = this->calculate_distance(temp_position);
+        this->check_battery_cost(distance, speed);
         move_robot_forward(distance, speed);
     }
-    else if (position.x < 0) {
+    else if (delta.x < 0.0) {
         Vec2 temp_position(position.x, this->last_odom.y);
         double distance = this->calculate_distance(temp_position);
+        this->check_battery_cost(distance, speed);
         move_robot_backward(distance, speed);
     }
-    if (position.y > 0) {
+    if (delta.y > 0.0) {
         Vec2 temp_position(this->last_odom.x, position.y);
         double distance = this->calculate_distance(temp_position);
+        this->check_battery_cost(distance, speed);
         move_robot_right(distance, speed);
     }
-    else if (position.y < 0) {
+    else if (delta.y < 0.0) {
         Vec2 temp_position(this->last_odom.x, position.y);
         double distance = this->calculate_distance(temp_position);
+        this->check_battery_cost(distance, speed);
         move_robot_left(distance, speed);
     }
 }
@@ -131,4 +139,9 @@ void Robot::charge_battery()
     this->is_charging = true;
     this->battery = 100;
     std::cout << "Charging..." << std::endl;
+}
+
+void Robot::print_info()
+{
+    std::cout << "\nBattery level: " << this->battery << "\nposition: " << this->last_odom.to_string() << std::endl << std::endl;
 }
