@@ -26,6 +26,7 @@ class MediaPlayer
 
         void play_pause_button_pressed()
         {
+            if (!on_state) return;
             if (play_state == Stopped || play_state == Paused)
             {
                 play_state = Playing;
@@ -45,4 +46,15 @@ class MediaPlayer
             ss << "\nMedia Player\non_state: " << on_state << "\nplay_state: " << ToString(play_state);
             return ss.str();
         }
+
+        bool get_on_state()
+        {
+            return on_state;
+        }
+
+        PlayStateEnum get_play_state()
+        {
+            return play_state;
+        }
+        
 };
