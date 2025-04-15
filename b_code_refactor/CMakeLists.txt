@@ -5,7 +5,7 @@ project(robot_brain)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-add_executable(${PROJECT_NAME} src/main.cpp src/robot.cpp)
+add_executable(${PROJECT_NAME} src/main.cpp src/robot.cpp src/command.cpp src/util.cpp)
 
 target_include_directories(${PROJECT_NAME} PRIVATE "include")
 

@@ -12,11 +12,6 @@ class Robot
     public:
         Robot();
         void check_battery_cost(double distance, double& speed);
-        void move_to(Vec2 position, double speed);
-        void move_robot_forward(double distance, double speed);
-        void move_robot_backward(double distance, double speed);
-        void move_robot_right(double distance, double speed);
-        void move_robot_left(double distance, double speed);
         Vec2 get_odometry();
         void update_odometry(double x, double y);
         double calculate_distance(Vec2 target);
