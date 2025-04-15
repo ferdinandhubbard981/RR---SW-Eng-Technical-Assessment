@@ -1,1 +1,3 @@
 Designing this so it is maintainable for years to come is tricky, because I don't really know what kind of features might be added to this robot, as I don't know what it will be used for either.
+
+If I were to for example need to support different batteries that have different battery usage calculations, I would create a battery interface, which I would inherit whenever I need to support a new battery. However, since I don't expect I will need this feature, there no point in making the program more complex for no reason.

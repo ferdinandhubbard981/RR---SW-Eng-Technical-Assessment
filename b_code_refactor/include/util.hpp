@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 #include "vec2.hpp"
 enum DirectionEnum

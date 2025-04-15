@@ -12,32 +12,16 @@ void MoveToCommand::execute()
     {
         Vec2 temp_position(destination.x, last_odom.y);
         double distance = robot.calculate_distance(temp_position);
-        Direction* direction;
-        if (delta.x > 0)
-        {
-            direction = new Direction(FORWARD);
-        }
-        else
-        {
-            direction = new Direction(BACKWARD);
-        }
-        std::unique_ptr<MoveCommand> move_x(new MoveCommand(this->robot, distance, *direction, this->speed));
+        Direction direction(delta.x > 0 ? FORWARD : BACKWARD);
+        std::unique_ptr<MoveCommand> move_x(new MoveCommand(this->robot, distance, direction, this->speed));
         commands.push_back(std::move(move_x));
     }
     if (delta.y != 0.0)
     {
         Vec2 temp_position(last_odom.x, destination.y);
         double distance = robot.calculate_distance(temp_position);
-        Direction* direction;
-        if (delta.y > 0)
-        {
-            direction = new Direction(RIGHT);
-        }
-        else
-        {
-            direction = new Direction(LEFT);
-        }
-        std::unique_ptr<MoveCommand> move_y (new MoveCommand(this->robot, distance, *direction, this->speed));
+        Direction direction(delta.y > 0 ? RIGHT : LEFT);
+        std::unique_ptr<MoveCommand> move_y (new MoveCommand(this->robot, distance, direction, this->speed));
         commands.push_back(std::move(move_y));
     }
     for (auto& command : commands) command.get()->execute();
