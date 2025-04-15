@@ -3,7 +3,9 @@
 #include "media_player.hpp"
 
 void print_instructions() {
-    std::cout << "Controls:\n"
+    std::cout 
+              << "To use this mp3 player, type one of the control characters, and press enter\n"
+              << "Controls:\n"
               << "1 - Power Button\n"
               << "2 - Play/Pause Button\n"
               << "3 - Stop Button\n"
